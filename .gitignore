@@ -1,0 +1,30 @@
+# ── Python ──────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# ── PyInstaller 构建产物 ─────────────────────────────
+build/
+dist/
+*.manifest
+
+# ── 运行时/日志 ─────────────────────────────────────
+*.log
+_build.log
+
+# ── 本机备份与临时文件 ───────────────────────────────
+config.json.bak
+*.bak-*
+*.running-*
+*.exe.bak*
+
+# ── 系统 ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

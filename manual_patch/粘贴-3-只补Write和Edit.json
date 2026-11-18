@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Write",
+    "description": "Create or fully replace a UTF-8 text file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to write. Provide file_path before content."
+        },
+        "content": {
+          "type": "string",
+          "description": "Full UTF-8 text content to write."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "Edit",
+    "description": "Edit an existing UTF-8 text file by replacing literal text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to edit. Provide file_path before old_string."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "Literal text to replace."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "Literal replacement text. Empty string deletes the match."
+        },
+        "replace_all": {
+          "type": "boolean",
+          "description": "Replace all matches. Defaults to false."
+        }
+      },
+      "required": [
+        "file_path",
+        "old_string",
+        "new_string"
+      ]
+    }
+  }
+]

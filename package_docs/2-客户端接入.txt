@@ -1,0 +1,76 @@
+客户端接入 · 改一处地址就够
+============================
+
+通用要点
+--------
+· 地址一定要带 /v1：http://127.0.0.1:8001/v1
+· 模型名要和网关「基础」页里的一致（本包预置 DeepSeek-V4.1-Flash）
+· API Key 随便填一个非空的（如 sk-local）。网关不校验它；
+  真正的鉴权发生在 AFS 那一层，所以这里不需要真 Key。
+· 图片输入（supportsImages）建议关掉，见 1-先看这里.txt 的"图片看不了"。
+
+
+一、DSH（.dsh）
+---------------
+编辑   %USERPROFILE%\.dsh\profiles\web\cordis.patch.yml
+（没有就新建；已有 llm-deepseek 那项就改 baseURL）
+
+- id: llm-deepseek
+  name: "@deepseek-ai/dsh-llm-deepseek-api-key"
+  config:
+    baseURL: http://127.0.0.1:8001/v1
+    models:
+      - id: DeepSeek-V4.1-Flash
+        name: DeepSeek-V4.1-Flash
+        contextWindow: 1000000
+        systemPromptUpdate: in-hi
+
+改完重启 dsh。
+注意 baseURL 是带 /v1 的；id 必须和网关里的模型名逐字一致。
+
+
+二、WorkBuddy（.workbuddy）
+---------------------------
+方式 A（推荐，图形界面）
+  模型设置 → 添加自定义服务商
+    URL      http://127.0.0.1:8001/v1
+    模型      DeepSeek-V4.1-Flash
+    API Key   sk-local（任意非空）
+    工具调用  开启
+    图片输入  关闭
+
+方式 B（直接改文件）
+  %USERPROFILE%\.workbuddy\models.json 里加一项：
+
+  {
+    "id": "DeepSeek-V4.1-Flash",
+    "name": "DeepSeek-V4.1-Flash",
+    "vendor": "Custom",
+    "url": "http://127.0.0.1:8001/v1",
+    "apiKey": "sk-local",
+    "supportsToolCall": true,
+    "supportsImages": false,
+    "supportsReasoning": false,
+    "useCustomProtocol": false
+  }
+
+
+三、为什么"选客户端"这么关键
+----------------------------
+两个客户端的工具名根本不一样：
+
+  WorkBuddy : PowerShell / Read / Write / Edit / Glob / WebSearch(query) / WebFetch(url, prompt)
+  DSH       : pwsh / read / write / edit / glob / web_search(queries 数组) / web_fetch(url)
+
+其中 Write/Edit（DSH 是小写 write/edit）是写文件与改文件，用来落盘大纲、
+脚本和最终生成的文档；做 Word→PPT 这类任务必须靠它们。
+
+网关会把模型吐出的工具调用**翻译成当前客户端认识的写法**。要是这里选错了，
+模型拿到的是另一套工具名，客户端认不出来，就会表现为"工具完全不工作"。
+所以在网关「基础」页选好客户端 → 保存配置 → 重启网关，是必须做的一步。
+
+
+四、换了客户端/改过 key 之后
+---------------------------
+网关会热重载 config.json，一般不用重启。只有端口、客户端预设这类
+影响启动参数的改动才需要重启网关（停止 → 启动）。

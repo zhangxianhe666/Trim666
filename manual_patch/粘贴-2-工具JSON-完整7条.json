@@ -1,0 +1,159 @@
+[
+  {
+    "name": "PowerShell",
+    "description": "Execute a PowerShell command and return its stdout/stderr. Use PowerShell cmdlets (Get-ChildItem to list files, Get-Content to read a file, Select-String to search); paths are native Windows paths like C:\\Users\\name, and environment variables are $env:NAME.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The PowerShell command to execute."
+        },
+        "description": {
+          "type": "string",
+          "description": "Clear, concise description of what this command does in active voice, 5-10 words (shown in the UI)."
+        }
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    }
+  },
+  {
+    "name": "Read",
+    "description": "Read a UTF-8 text file and return line-numbered content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to the file"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Line number to start reading from"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of lines to read"
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "Glob",
+    "description": "Find files whose paths match a glob pattern.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Glob pattern, e.g. src/**/*.py"
+        },
+        "path": {
+          "type": "string",
+          "description": "Directory to search in"
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "Write",
+    "description": "Create or fully replace a UTF-8 text file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to write. Provide file_path before content."
+        },
+        "content": {
+          "type": "string",
+          "description": "Full UTF-8 text content to write."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "Edit",
+    "description": "Edit an existing UTF-8 text file by replacing literal text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to edit. Provide file_path before old_string."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "Literal text to replace."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "Literal replacement text. Empty string deletes the match."
+        },
+        "replace_all": {
+          "type": "boolean",
+          "description": "Replace all matches. Defaults to false."
+        }
+      },
+      "required": [
+        "file_path",
+        "old_string",
+        "new_string"
+      ]
+    }
+  },
+  {
+    "name": "WebSearch",
+    "description": "Search the web for current information. The result lists sources; use WebFetch to open a source URL for full content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Keep entity names, versions, dates and terms as-is."
+        },
+        "freshness": {
+          "type": "string",
+          "description": "Optional time filter: d1 (today) / w1 (this week) / m1 (this month)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "WebFetch",
+    "description": "Fetch one web page and return its content. Use it to open a search-result source URL when you need the full content of a page.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The http(s) URL to read"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "What to extract from the page, e.g. temperature, weather condition, humidity"
+        }
+      },
+      "required": [
+        "url",
+        "prompt"
+      ]
+    }
+  }
+]

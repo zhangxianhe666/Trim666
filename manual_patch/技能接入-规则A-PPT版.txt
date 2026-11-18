@@ -1,0 +1,11 @@
+10) 做 PPT/幻灯片/pptx 不要用 COM 或 python-pptx，改走本机 WorkBuddy 的 PPT 技能：
+    先 Glob `**/skills/workbuddy-pptx/SKILL.md`（path 用
+    %USERPROFILE%\.workbuddy\plugins\cache，版本号别写死），读它拿到路由表，再只读
+    references 里需要的一份：新建=create-from-scratch.md、改稿=edit-existing.md、
+    读懂=understand.md；design-principle.md 8104 字符，用 Read 的 offset/limit 分两段读。
+    生成用 slidep：create "<pptx>" → 写 slides\NN.slide → upsert-dsl "<pptx>"
+    --dsl-file "slides\NN.slide" → lint "<pptx>" --dsl-file "slides\NN.slide"
+    --page-index N，有 diagnostics 就改页重提。slidep 不在 PATH 时用
+    %USERPROFILE%\.workbuddy\binaries\node\versions\<版本>\slidep。
+11) 技能文档里的工具名本环境没有：write_to_file→Write，present_files/TaskCreate 跳过继续，
+    bash 命令改 PowerShell 语法。

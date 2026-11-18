@@ -1,0 +1,94 @@
+name: build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      upload_release:
+        description: '工作流手动触发时也上传到 Release（需已有同名 tag）'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: ds-trim-gateway-windows-x64
+            asset: ds-trim-gateway-windows-x64.zip
+          - os: macos-latest
+            artifact: ds-trim-gateway-macos-arm64
+            asset: ds-trim-gateway-macos-arm64.zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      - name: Run tests
+        shell: bash
+        run: |
+          python test_max_rounds.py
+          python test_max_calls.py
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: python -m PyInstaller ds-trim-gateway.spec --noconfirm --clean
+
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: python -m PyInstaller ds-trim-gateway.spec --noconfirm --clean
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          cd dist
+          ls -la
+          powershell -Command "Compress-Archive -Path 'ds-trim-gateway.exe' -DestinationPath '${{ matrix.asset }}' -Force"
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          cd dist
+          ls -la
+          if [ -d ds-trim-gateway.app ]; then
+            ditto -c -k --sequesterRsrc --keepParent ds-trim-gateway.app "${{ matrix.asset }}"
+          else
+            chmod +x ds-trim-gateway
+            zip -r "${{ matrix.asset }}" ds-trim-gateway
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.asset }}
+          if-no-files-found: error
+
+      - name: Attach to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ matrix.asset }}
+          fail_on_unmatched_files: true
+          generate_release_notes: false

@@ -1,0 +1,153 @@
+[
+  {
+    "name": "pwsh",
+    "description": "Execute a PowerShell command and return its stdout/stderr. Use PowerShell cmdlets (Get-ChildItem to list files, Get-Content to read a file, Select-String to search); paths are native Windows paths like C:\\Users\\name, and environment variables are $env:NAME.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The PowerShell command to execute."
+        },
+        "description": {
+          "type": "string",
+          "description": "Clear, concise description of what this command does in active voice, 5-10 words (shown in the UI)."
+        }
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    }
+  },
+  {
+    "name": "read",
+    "description": "Read a UTF-8 text file and return line-numbered content.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to the file"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Line number to start reading from"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of lines to read"
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "glob",
+    "description": "Find files whose paths match a glob pattern.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Glob pattern, e.g. src/**/*.py"
+        },
+        "path": {
+          "type": "string",
+          "description": "Directory to search in"
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "write",
+    "description": "Create or fully replace a UTF-8 text file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to write. Provide file_path before content."
+        },
+        "content": {
+          "type": "string",
+          "description": "Full UTF-8 text content to write."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "edit",
+    "description": "Edit an existing UTF-8 text file by replacing literal text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "file_path": {
+          "type": "string",
+          "description": "Absolute path to edit. Provide file_path before old_string."
+        },
+        "old_string": {
+          "type": "string",
+          "description": "Literal text to replace."
+        },
+        "new_string": {
+          "type": "string",
+          "description": "Literal replacement text. Empty string deletes the match."
+        },
+        "replace_all": {
+          "type": "boolean",
+          "description": "Replace all matches. Defaults to false."
+        }
+      },
+      "required": [
+        "file_path",
+        "old_string",
+        "new_string"
+      ]
+    }
+  },
+  {
+    "name": "web_search",
+    "description": "Search the web for current information. Provide 1-4 queries; their results are merged. The result lists source URLs; use web_fetch to open one.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "1-4 search queries; their results are merged."
+        }
+      },
+      "required": [
+        "queries"
+      ]
+    }
+  },
+  {
+    "name": "web_fetch",
+    "description": "Fetch the content of a specific HTTP(S) URL and return it decoded to text.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The HTTP(S) URL to fetch."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  }
+]

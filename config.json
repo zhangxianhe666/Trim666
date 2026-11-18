@@ -1,0 +1,148 @@
+{
+  "upstream_base": "http://127.0.0.1:8080/v1",
+  "upstream_api_key": "",
+  "upstream_model": "DeepSeek-V4.1-Flash",
+  "system_prompt": "你是工具调用大师，你不直接操作，但你会根据用户的问题生成XML格式的工具调用指令。当需要调用工具时，只输出 XML 工具调用块，不要输出任何解释文字。最重要的一点：一旦你已经获得回答用户问题所需的数据，就不要再调用工具，直接用普通文字给出完整回答——数据够了却继续调工具是最常见的错误。规则：1) 工具调用失败或超时是正常现象，不要连续重复调用完全相同的工具和参数；2) 用 WebSearch 搜索后结果可能只列出来源摘要，需要具体数据时用 WebFetch 打开来源 URL（把要提取的字段写清楚，例如「重庆今天的气温、天气现象、湿度」）；3) 不要反复用不同关键词重搜同一个问题，也不要重复读取已经读过的 URL；4) 先看[此前已执行的工具结果]，里面已有的数据直接使用，不要重新获取；5) 绝对禁止编造数据：只有当工具结果里明确出现过某个数字时才能引用它。如果工具结果只有来源链接、没有具体数值，必须用 WebFetch 打开来源把数据取回来；确实取不到就如实说明未获取到——编造数字比回答不出来严重得多。6) 本机是 Windows：shell 工具是 PowerShell，命令必须用 PowerShell 语法（列目录用 Get-ChildItem、看文件用 Get-Content、搜索用 Select-String，不要用 ls / cat / grep / find 这类 POSIX 命令），路径用原生 Windows 形式（如 C:\\Users\\name\\Documents，反斜杠），环境变量用 $env:NAME。",
+  "tools": [
+    {
+      "name": "PowerShell",
+      "description": "Execute a PowerShell command and return its stdout/stderr. Use PowerShell cmdlets (Get-ChildItem to list files, Get-Content to read a file, Select-String to search); paths are native Windows paths like C:\\Users\\name, and environment variables are $env:NAME.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "The PowerShell command to execute."
+          },
+          "description": {
+            "type": "string",
+            "description": "Clear, concise description of what this command does in active voice, 5-10 words (shown in the UI)."
+          }
+        },
+        "required": [
+          "command",
+          "description"
+        ]
+      }
+    },
+    {
+      "name": "Read",
+      "description": "Read a UTF-8 text file and return line-numbered content.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Absolute path to the file"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Line number to start reading from"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of lines to read"
+          }
+        },
+        "required": [
+          "file_path"
+        ]
+      }
+    },
+    {
+      "name": "Glob",
+      "description": "Find files whose paths match a glob pattern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Glob pattern, e.g. src/**/*.py"
+          },
+          "path": {
+            "type": "string",
+            "description": "Directory to search in"
+          }
+        },
+        "required": [
+          "pattern"
+        ]
+      }
+    },
+    {
+      "name": "WebSearch",
+      "description": "Search the web for current information. The result lists sources; use WebFetch to open a source URL for full content.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query. Keep entity names, versions, dates and terms as-is."
+          },
+          "freshness": {
+            "type": "string",
+            "description": "Optional time filter: d1 (today) / w1 (this week) / m1 (this month)"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "WebFetch",
+      "description": "Fetch one web page and return its content. Use it to open a search-result source URL when you need the full content of a page.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The http(s) URL to read"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "What to extract from the page, e.g. temperature, weather condition, humidity"
+          }
+        },
+        "required": [
+          "url",
+          "prompt"
+        ]
+      }
+    }
+  ],
+  "drop_client_system": true,
+  "max_system_chars": 1500,
+  "retry_backoff_ms": 60000,
+  "min_request_interval_ms": 12000,
+  "max_tool_calls_per_round": 1,
+  "max_total_rounds": 20,
+  "history_max_rounds": 3,
+  "history_result_chars": 3000,
+  "history_total_chars": 8000,
+  "history_include_dialogue": true,
+  "history_dialogue_msgs": 6,
+  "history_dialogue_chars": 800,
+  "history_dialogue_total_chars": 3000,
+  "inject_current_date": true,
+  "local_image_enabled": true,
+  "workspace_root": "",
+  "local_image_exts": [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".bmp"
+  ],
+  "local_image_max_bytes": 8388608,
+  "local_image_max_count": 4,
+  "local_image_restrict_to_workspace": false,
+  "server_search_mode": "auto",
+  "server_search_max_rounds": 2,
+  "server_search_max_queries": 2,
+  "server_search_max_results": 5,
+  "server_search_fetch_top": 2,
+  "server_search_page_chars": 1200,
+  "log_lines": 200
+}
